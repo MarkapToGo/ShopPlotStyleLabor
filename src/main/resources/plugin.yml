@@ -1,0 +1,11 @@
+name: 'ShopPlot-StyleLabor'
+version: '${project.version}'
+main: de.stylelabor.dev.shopplotstylelabor.Main
+api-version: '1.21'
+prefix: '[ShopPlotStyleLabor]'
+authors: [Markap]
+description: A plugin coded for StyleLabor!
+commands:
+  stylelaborshops:
+    description: Command for the StyleLabor shops.
+    usage: /<command> <setup>
