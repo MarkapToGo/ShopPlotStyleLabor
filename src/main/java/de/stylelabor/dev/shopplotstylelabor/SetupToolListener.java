@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,14 +29,24 @@ public class SetupToolListener implements Listener {
             switch (event.getAction()) {
                 case LEFT_CLICK_AIR:
                 case LEFT_CLICK_BLOCK:
-                    player.sendMessage("Pos 1 set");
-                    savePosition(player.getLocation(), "Pos1");
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.sendMessage("§aPos 1 set");
+                            savePosition(player.getLocation(), "Pos1");
+                        }
+                    }.runTaskLater(Main.getPlugin(Main.class), 10L);
                     event.setCancelled(true);
                     break;
                 case RIGHT_CLICK_AIR:
                 case RIGHT_CLICK_BLOCK:
-                    player.sendMessage("Pos 2 set");
-                    savePosition(player.getLocation(), "Pos2");
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.sendMessage("§aPos 2 set");
+                            savePosition(player.getLocation(), "Pos2");
+                        }
+                    }.runTaskLater(Main.getPlugin(Main.class), 10L);
                     event.setCancelled(true);
                     break;
             }
@@ -43,7 +54,15 @@ public class SetupToolListener implements Listener {
     }
 
     private void savePosition(Location location, String posName) {
-        File file = new File("positions.yml");
+        File dataFolder = Main.getPlugin(Main.class).getDataFolder();
+        if (!dataFolder.exists()) {
+            boolean success = dataFolder.mkdir();
+            if (!success) {
+                LOGGER.log(Level.SEVERE, "Failed to create data directory");
+                return;
+            }
+        }
+        File file = new File(dataFolder, "positions.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         config.set(posName + ".x", location.getX());
