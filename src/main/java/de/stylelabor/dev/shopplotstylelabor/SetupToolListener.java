@@ -2,12 +2,12 @@ package de.stylelabor.dev.shopplotstylelabor;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -26,16 +26,22 @@ public class SetupToolListener implements Listener {
 
         // Check if the player is an operator and is holding the setup tool
         if (player.isOp() && itemInHand.getType() == Material.DIAMOND_AXE && itemInHand.getItemMeta() != null && "§6Setup Tool".equals(itemInHand.getItemMeta().getDisplayName())) {
+            // If the player is in cooldown, return immediately
+            if (player.hasCooldown(Material.DIAMOND_AXE)) {
+                return;
+            }
+
             switch (event.getAction()) {
                 case LEFT_CLICK_AIR:
                 case LEFT_CLICK_BLOCK:
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            player.sendMessage("§aPos 1 set");
+                            player.sendMessage("§7[§a✔§7] §6StyleLabor §f- §aPos 1 set");
                             savePosition(player.getLocation(), "Pos1");
                         }
-                    }.runTaskLater(Main.getPlugin(Main.class), 10L);
+                    }.runTaskLater(Main.getPlugin(Main.class), 20L);
+                    player.setCooldown(Material.DIAMOND_AXE, 20);
                     event.setCancelled(true);
                     break;
                 case RIGHT_CLICK_AIR:
@@ -43,10 +49,11 @@ public class SetupToolListener implements Listener {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            player.sendMessage("§aPos 2 set");
+                            player.sendMessage("§7[§a✔§7] §6StyleLabor §f- §aPos 2 set");
                             savePosition(player.getLocation(), "Pos2");
                         }
-                    }.runTaskLater(Main.getPlugin(Main.class), 10L);
+                    }.runTaskLater(Main.getPlugin(Main.class), 20L);
+                    player.setCooldown(Material.DIAMOND_AXE, 20);
                     event.setCancelled(true);
                     break;
             }
